@@ -76,3 +76,6 @@ pagehelper:
   params: count
   reasonable: true
   support-methods-arguments: true
+
+server:
+  port: 9090

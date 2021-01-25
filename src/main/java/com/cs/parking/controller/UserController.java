@@ -81,19 +81,17 @@ public class UserController {
         User user =  null;
         try {
             JSONObject SessionKeyOpenId = new WechatUtil().getSessionKeyOrOpenId(code);
-         //   String openid = SessionKeyOpenId.getString("openid");
-            String openid = String.valueOf(System.currentTimeMillis());
-            if (redisUtil.hasKey(code)){
-                user = (User) redisUtil.get(code);
+            String openid = SessionKeyOpenId.getString("openid");
+            if (redisUtil.hasKey(openid)){
+                user = (User) redisUtil.get(openid);
             }else {
-                user = userService.selectByOpenid(code);
+                user = userService.selectByOpenid(openid);
                 if (user == null){
                     user = new User();
-                   // user.setOpenId(openid);
-                    user.setOpenId(code);
+                    user.setOpenId(openid);
                     userService.insertUser(user);
                 }
-                redisUtil.set(code,user);
+                redisUtil.set(openid,user);
             }
             String jwt = JWTUtil.getInstance().createJWT(user.getId());
             LoginDTO loginDTO = new LoginDTO(user,jwt);
