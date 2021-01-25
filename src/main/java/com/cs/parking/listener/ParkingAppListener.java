@@ -27,6 +27,7 @@ import java.util.List;
  * @Date 2021/1/24 18:29
  **/
 @Component
+@Log4j2
 public class ParkingAppListener implements ApplicationListener<ContextRefreshedEvent> {
 
     public static ParkingAppListener parkingAppListener;
@@ -36,19 +37,16 @@ public class ParkingAppListener implements ApplicationListener<ContextRefreshedE
     }
 
     @Autowired
-    ScheduleJobService scheduleJobService;
-    @Autowired
     SchedulerManager schedulerManager;
 
     @SneakyThrows
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         if (contextRefreshedEvent.getApplicationContext().getParent() == null){
-            List<ScheduleJob> scheduleJobs = parkingAppListener.scheduleJobService.selectNotComplete();
-            if (scheduleJobs != null && scheduleJobs.size() > 0){
-                scheduleJobs.forEach(scheduleJob -> {
-                    parkingAppListener.schedulerManager.modify(scheduleJob.getJobKey(),scheduleJob.getJobGroup(),CornTimeUtil.getInstance().dateToCorn(new Date()));
-                });
+            try {
+                parkingAppListener.schedulerManager.resumeJob();
+            }catch (Exception e){
+                log.error(e.getMessage());
             }
         }
     }

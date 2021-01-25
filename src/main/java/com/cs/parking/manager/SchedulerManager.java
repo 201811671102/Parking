@@ -44,6 +44,24 @@ public class SchedulerManager {
         scheduler.clear();
     }
 
+
+    public void resumeJob(){
+        try {
+            scheduler.start();
+            JobDetail jobDetail = JobBuilder.newJob(NoticeJob.class)
+                    .withIdentity("resumeKey", "resumeGroup")
+                    .build();
+            CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 0 0 * * *");
+            CronTrigger cronTrigger = TriggerBuilder.newTrigger()
+                    .withIdentity("resumeKey", "resumeGroup")
+                    .withSchedule(scheduleBuilder)
+                    .build();
+            scheduler.scheduleJob(jobDetail,cronTrigger);
+        } catch (Exception e) {
+            throw new ErrorException(BaseCode.System_Error,"24点重启任务失败！\n "+e.getMessage());
+        }
+    }
+
     //添加任务
     public void add(String jobName,String jobGroup, Date cornDate, JobDataMap jobDataMap) throws SchedulerException {
         try {

@@ -80,10 +80,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="start_time_year" type="timestamp"  remarks="共享开始时间">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="end_time_year" type="timestamp"  remarks="共享结束时间">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="start_time_day" type="int(5)"  remarks="每日开始共享时间">
                 <constraints nullable="false"/>
@@ -118,10 +118,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="start_time" type="timestamp"  remarks="开始时间">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="end_time" type="timestamp"  remarks="到期时间">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="parking_space_id" type="int(200)"  remarks="所属车位">
                 <constraints nullable="false" referencedTableName="parking_space" referencedColumnNames="id" foreignKeyName="coupons_parking_space_pid"/>
@@ -150,13 +150,13 @@
                 <constraints nullable="false"/>
             </column>
             <column name="pay_time" type="timestamp"  remarks="订单支付时间">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="effect_time" type="timestamp"  remarks="订单生效时间">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="failure_time" type="timestamp"  remarks="订单失效时间">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="appointment_time" type="varchar(50)"  remarks="预约时间">
                 <constraints nullable="false"/>
@@ -208,7 +208,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="report_time" type="timestamp"  remarks="举报时间">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="longitude" type="double(10)"  remarks="经度">
                 <constraints nullable="false"/>
@@ -240,7 +240,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="job_time" type="timestamp" remarks="任务执行时间">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="state" type="boolean" remarks="任务情况">
                 <constraints nullable="false"/>
