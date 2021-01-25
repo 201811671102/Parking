@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <!--如果一开始没用，后期想引入 liquibase，可以把以前的数据库导出成 sql，然后引入 sql 文件-->
+    <!--<include file="liquibase/changelogs/project.sql" relativeToChangelogFile="false"/>-->
+    
+    <changeSet id="20210116-01" author="CG">
+        <!--预判断-->
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user"/>
+                <tableExists tableName="parking_space"/>
+                <tableExists tableName="order_record"/>
+                <tableExists tableName="coupons"/>
+                <tableExists tableName="user_coupons"/>
+                <tableExists tableName="report"/>
+                <tableExists tableName="schedule_job"/>
+                <tableExists tableName="notice_message"/>
+                <indexExists indexName="uniq_user_index"/>
+                <indexExists indexName="idx_parking_space_index"/>
+                <indexExists indexName="idx_order_record_index"/>
+                <indexExists indexName="idx_user_coupons_index"/>
+                <indexExists indexName="idx_report_index"/>
+                <indexExists indexName="idx_notice_message_index"/>
+            </not>
+        </preConditions>
+        <!--创建表-->
+        <createTable tableName="user" remarks="用户表">
+            <column name="id" type="integer(100)" remarks="用户id" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="open_id" type="varchar(50)" remarks="微信登录唯一标识">
+                <constraints  nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="varchar(20)"  remarks="姓名">
+                <constraints nullable="true" />
+            </column>
+            <column name="id_type" type="int(5)" remarks="证件类型">
+                <constraints  nullable="true"/>
+            </column>
+            <column name="id_number" type="varchar(20)"  remarks="证件号码">
+                <constraints  nullable="true" unique="true"/>
+            </column>
+            <column name="vip_time" type="timestamp"  remarks="vip时效">
+                <constraints  nullable="true"/>
+            </column>
+        </createTable>
+        <createTable tableName="parking_space" remarks="车位表">
+            <column name="id" type="integer(200)"  remarks="车位id" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="int(100)"  remarks="用户id">
+                <constraints nullable="false"  referencedTableName="user" referencedColumnNames="id" foreignKeyName="parking_space__user_uid"/>
+            </column>
+            <column name="short_name" type="varchar(50)"  remarks="停车位简称">
+                <constraints nullable="false"/>
+            </column>
+            <column name="province" type="varchar(30)"  remarks="车位地址|省">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city" type="varchar(30)"  remarks="车位地址|市">
+                <constraints nullable="false"/>
+            </column>
+            <column name="county" type="varchar(30)"  remarks="车位地址|县">
+                <constraints nullable="false"/>
+            </column>
+            <column name="town" type="varchar(30)"  remarks="车位地址|镇">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address" type="varchar(100)"  remarks="车位地址|详细地址">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rent_phone_number" type="varchar(20)"  remarks="租车位电话">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="double(10)"  remarks="价格">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time_year" type="timestamp"  remarks="共享开始时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time_year" type="timestamp"  remarks="共享结束时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time_day" type="int(5)"  remarks="每日开始共享时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time_day" type="int(5)"  remarks="每日结束共享时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="longitude" type="double(10)"  remarks="经度">
+                <constraints nullable="false"/>
+            </column>
+            <column name="latitude" type="double(10)"  remarks="纬度">
+                <constraints nullable="false"/>
+            </column>
+            <column name="share" type="boolean"  remarks="是否共享" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cancel" type="boolean"  remarks="是否删除" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="coupons" remarks="优惠卷">
+            <column name="id" type="int(200)"  remarks="优惠卷id" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(50)"  remarks="优惠卷名字">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="double(20)"  remarks="优惠卷金额">
+                <constraints nullable="false"/>
+            </column>
+            <column name="number" type="int(20)"  remarks="优惠卷数量">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time" type="timestamp"  remarks="开始时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="timestamp"  remarks="到期时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parking_space_id" type="int(200)"  remarks="所属车位">
+                <constraints nullable="false" referencedTableName="parking_space" referencedColumnNames="id" foreignKeyName="coupons_parking_space_pid"/>
+            </column>
+            <column name="cancel" type="boolean"  remarks="是否删除" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="order_record" remarks="订单表">
+            <column name="id" type="int(300)"  remarks="订单id" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="parking_space_id" type="int(200)"  remarks="车位id">
+                <constraints nullable="false" referencedTableName="parking_space" referencedColumnNames="id" foreignKeyName="order_record_parking_space_pid"/>
+            </column>
+            <column name="user_id" type="int(100)"  remarks="用户id">
+                <constraints nullable="false"  referencedTableName="user" referencedColumnNames="id" foreignKeyName="order_record_user_uid"/>
+            </column>
+            <column name="coupons_id" type="varchar(50)"  remarks="优惠卷id">
+                <constraints nullable="true"/>
+            </column>
+            <column name="car_number" type="varchar(20)" remarks="车牌号">
+                <constraints nullable="false"/>
+            </column>
+            <column name="car_owner_phone_number" type="varchar(20)"  remarks="车主电话">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pay_time" type="timestamp"  remarks="订单支付时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effect_time" type="timestamp"  remarks="订单生效时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="failure_time" type="timestamp"  remarks="订单失效时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="appointment_time" type="varchar(50)"  remarks="预约时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_amount" type="double(10)"  remarks="支付金额">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_state" type="int(5)"  remarks="订单状态 0未开始 1进行中 2已完成">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="user_coupons" remarks="用户优惠卷关联表">
+            <column name="id"  type="int(300)"  remarks="关联表id" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="coupons_id" type="int(200)"  remarks="优惠卷id">
+                <constraints nullable="false"  referencedTableName="coupons" referencedColumnNames="id" foreignKeyName="user_coupons_coupons_cid"/>
+            </column>
+            <column name="user_id" type="int(100)"  remarks="用户id">
+                <constraints nullable="false"  referencedTableName="user" referencedColumnNames="id" foreignKeyName="user_coupons_user_uid"/>
+            </column>
+            <column name="used" type="boolean"  remarks="是否已经使用" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="report" remarks="违规举报记录">
+            <column name="id" type="int(300)"  remarks="违规举报id" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="car_number" type="varchar(20)"  remarks="车牌号">
+                <constraints nullable="false"/>
+            </column>
+            <column name="report_type" type="int(5)"  remarks="违规类型">
+                <constraints nullable="false"/>
+            </column>
+            <column name="province" type="varchar(30)"  remarks="车辆地址|省">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city" type="varchar(30)"  remarks="车辆地址|市">
+                <constraints nullable="false"/>
+            </column>
+            <column name="county" type="varchar(30)"  remarks="车辆地址|县">
+                <constraints nullable="false"/>
+            </column>
+            <column name="town" type="varchar(30)"  remarks="车辆地址|镇">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address" type="varchar(100)"  remarks="车辆地址|详细地址">
+                <constraints nullable="false"/>
+            </column>
+            <column name="report_time" type="timestamp"  remarks="举报时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="longitude" type="double(10)"  remarks="经度">
+                <constraints nullable="false"/>
+            </column>
+            <column name="latitude" type="double(10)"  remarks="纬度">
+                <constraints nullable="false"/>
+            </column>
+            <column name="report_photo" type="varchar(500)"  remarks="违规照片;分隔">
+                <constraints nullable="true"/>
+            </column>
+            <column name="deal" type="boolean"  remarks="是否处理" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cancel" type="boolean"  remarks="是否撤销" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="schedule_job" remarks="定时任务表">
+            <column name="id" type="int(500)" remarks="任务id" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="job_key" type="varchar(50)" remarks="任务名">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_group" type="varchar(50)" remarks="任务组名">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_content" type="varchar(500)" remarks="任务内容">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_time" type="timestamp" remarks="任务执行时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state" type="boolean" remarks="任务情况">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="notice_message" remarks="通知记录">
+            <column name="id" type="int(500)" remarks="记录id" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="int(100)"  remarks="用户id">
+                <constraints nullable="false"  referencedTableName="user" referencedColumnNames="id" foreignKeyName="notice_message_user_uid"/>
+            </column>
+            <column name="message" type="varchar(1000)" remarks="消息">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state" type="boolean" remarks="是否读取">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <!--创建索引-->
+        <createIndex tableName="user" indexName="uniq_user_index" unique="true">
+            <column name="open_id">
+                <constraints unique="true" nullable="false"/>
+            </column>
+        </createIndex>
+        <createIndex tableName="parking_space" indexName="idx_parking_space_index" unique="false">
+            <column name="longitude">
+                <constraints  nullable="false"/>
+            </column>
+            <column name="latitude">
+                <constraints  nullable="false"/>
+            </column>
+            <column name="user_id">
+                <constraints  nullable="false"/>
+            </column>
+        </createIndex>
+        <createIndex tableName="order_record" indexName="idx_order_record_index" unique="false">
+            <column name="parking_space_id">
+                <constraints  nullable="false"/>
+            </column>
+            <column name="user_id">
+                <constraints  nullable="false"/>
+            </column>
+        </createIndex>
+        <createIndex tableName="user_coupons" indexName="idx_user_coupons_index" unique="false">
+            <column name="user_id">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+        <createIndex tableName="report" indexName="idx_report_index" unique="false">
+            <column name="longitude">
+                <constraints  nullable="false"/>
+            </column>
+            <column name="latitude">
+                <constraints  nullable="false"/>
+            </column>
+        </createIndex>
+        <createIndex tableName="notice_message" indexName="idx_notice_message_index" unique="false">
+            <column name="user_id">
+                <constraints nullable="false"/>
+            </column>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
