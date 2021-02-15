@@ -73,7 +73,7 @@ public class JWTUtil {
         }catch (TokenExpiredException e){
             throw new SystemException(UserExceptionCode.NoToken);
         }catch (Exception e){
-            throw new ErrorException(BaseCode.JWTError,e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,e.getMessage());
         }
     }
 
@@ -88,9 +88,9 @@ public class JWTUtil {
             Integer uid = verifier.verify(jwt).getClaim("uid").asInt();
             return createJWT(uid);
         }catch (TokenExpiredException e){
-            throw new SystemException(UserExceptionCode.TokenOverdue);
+            throw new SystemException(UserExceptionCode.NoToken);
         }catch (Exception e){
-            throw new ErrorException(BaseCode.JWTError,e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,e.getMessage());
         }
     }
 }

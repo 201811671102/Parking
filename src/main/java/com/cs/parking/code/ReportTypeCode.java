@@ -10,7 +10,7 @@ import io.swagger.models.auth.In;
  **/
 public enum  ReportTypeCode {
     DisorderlyParkingPlace(1,"乱停乱放"),
-    IllegalOccupancyOfEmergencyLanes(2,"Illegal occupancy of emergency lanes")
+    IllegalOccupancyOfEmergencyLanes(2,"非法占用紧急车道")
     ;
     private int code;
     private String reportType;

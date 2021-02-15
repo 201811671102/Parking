@@ -37,7 +37,7 @@ public class EncodeUtil {
             BASE64Encoder encoder = new BASE64Encoder();
             return encoder.encode(byteArrayOutputStream.toByteArray());
         }catch (Exception e){
-            throw new ErrorException(BaseCode.IOError,"base64加密图片出错！\n "+e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,"base64加密图片出错！\n "+e.getMessage());
         }
     }
     /*
@@ -51,7 +51,7 @@ public class EncodeUtil {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
             return byteArrayInputStream;
         } catch (IOException e) {
-            throw new ErrorException(BaseCode.IOError,"base64解密图片出错！ \n "+e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,"base64解密图片出错！ \n "+e.getMessage());
         }
     }
 }

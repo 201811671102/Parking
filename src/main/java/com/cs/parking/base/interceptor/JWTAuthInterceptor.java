@@ -46,7 +46,7 @@ public class JWTAuthInterceptor implements HandlerInterceptor {
             }
         }
 
-        if (method.isAnnotationPresent(ParameterVerify.class)){
+       /* if (method.isAnnotationPresent(ParameterVerify.class)){
             ParameterVerify parameterVerify = method.getAnnotation(ParameterVerify.class);
             if (parameterVerify != null){
                 String[] parameterKeys = parameterVerify.parameterKey();
@@ -55,7 +55,7 @@ public class JWTAuthInterceptor implements HandlerInterceptor {
                 Map<String, String[]> parameterMap = request.getParameterMap();
                 ParameterVerifyUtil.getInstance().verifyParameterVer(parameterKeys,parameterNames,parameterCode,parameterMap);
             }
-        }
+        }*/
         return true;
     }
 

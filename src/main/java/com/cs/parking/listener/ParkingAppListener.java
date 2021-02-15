@@ -44,7 +44,7 @@ public class ParkingAppListener implements ApplicationListener<ContextRefreshedE
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         if (contextRefreshedEvent.getApplicationContext().getParent() == null){
             try {
-                parkingAppListener.schedulerManager.resumeJob();
+                parkingAppListener.schedulerManager.systemJob();
             }catch (Exception e){
                 log.error(e.getMessage());
             }

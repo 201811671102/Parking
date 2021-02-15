@@ -80,7 +80,7 @@ public class FtpOperation {
                 return false;
             }
         }catch (Exception e) {
-            throw new ErrorException(BaseCode.FTPError,"ERR : upload file  to ftp : failed! \n"+e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,"ERR : upload file  to ftp : failed! \n"+e.getMessage());
         } finally {
             try {
                 if (buffIn != null) {
@@ -88,7 +88,7 @@ public class FtpOperation {
                 }
                 pool.returnFTPClient(ftpClient);
             } catch (Exception e) {
-                throw new ErrorException(BaseCode.FTPError,"ftp关闭输入流时失败！ \n"+e.getMessage());
+                throw new ErrorException(BaseCode.System_Error,"ftp关闭输入流时失败！ \n"+e.getMessage());
             }
         }
     }
@@ -119,7 +119,7 @@ public class FtpOperation {
             in=ftpClient.retrieveFileStream(filename);
             return in;
         }catch (Exception e) {
-            throw new ErrorException(BaseCode.FTPError,"ERR : upload file "+ filename+ " from ftp : failed! \n"+e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,"ERR : upload file "+ filename+ " from ftp : failed! \n"+e.getMessage());
         }finally {
             pool.returnFTPClient(ftpClient);
         }
@@ -136,7 +136,7 @@ public class FtpOperation {
             }
             return true;
         }catch (Exception e) {
-            throw new ErrorException(BaseCode.FTPError,"ERR : delete file "+ filename+ " from ftp : failed! \n"+e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,"ERR : delete file "+ filename+ " from ftp : failed! \n"+e.getMessage());
         }finally {
             pool.returnFTPClient(ftpClient);
         }
@@ -151,7 +151,7 @@ public class FtpOperation {
         try {
             ftpClient.setFileType(fileType);
         } catch (Exception e) {
-            throw new ErrorException(BaseCode.FTPError,"ftp设置传输文件的类型时失败！ \n"+e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,"ftp设置传输文件的类型时失败！ \n"+e.getMessage());
         }
     }
 }

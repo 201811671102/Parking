@@ -37,7 +37,7 @@ public class FtpPool {
         try {
             return internalPool.borrowObject();
         } catch (Exception e) {
-            throw new ErrorException(BaseCode.FTPError,"从连接池获取链接失败 \n"+e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,"从连接池获取链接失败 \n"+e.getMessage());
         }
     }
     //将链接归还到连接池
@@ -45,7 +45,7 @@ public class FtpPool {
         try {
             internalPool.returnObject(ftpClient);
         } catch (Exception e) {
-            throw new ErrorException(BaseCode.FTPError,"链接归还到连接池失败 \n"+e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,"链接归还到连接池失败 \n"+e.getMessage());
         }
     }
     /**
@@ -55,7 +55,7 @@ public class FtpPool {
         try {
             internalPool.close();
         } catch (Exception e) {
-            throw new ErrorException(BaseCode.FTPError,"销毁池子失败 \n"+e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,"销毁池子失败 \n"+e.getMessage());
         }
     }
 }

@@ -1,16 +1,15 @@
 package com.cs.parking.quzrtzJob;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cs.parking.base.utils.CornTimeUtil;
 import com.cs.parking.base.utils.MessageUtil;
 import com.cs.parking.code.Protocol;
 import com.cs.parking.code.QuartzJobCode;
-import com.cs.parking.controller.NoticeMessageDTO;
+import com.cs.parking.dto.NoticeMessageDTO;
 import com.cs.parking.manager.ConnManager;
 import com.cs.parking.manager.SchedulerManager;
 import com.cs.parking.pojo.NoticeMessage;
-import com.cs.parking.pojo.ScheduleJob;
 import com.cs.parking.service.NoticeMessageService;
+import com.cs.parking.service.OrderRecordService;
 import com.cs.parking.service.ScheduleJobService;
 import lombok.SneakyThrows;
 import org.quartz.*;
@@ -20,9 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @ClassName NoticeJob
@@ -44,6 +40,8 @@ public class NoticeJob implements Job {
     NoticeMessageService noticeMessageService;
     @Autowired
     SchedulerManager schedulerManager;
+    @Autowired
+    OrderRecordService orderRecordService;
 
     @SneakyThrows
     @Override
@@ -97,10 +95,12 @@ public class NoticeJob implements Job {
                     if(noticeMessage.getState()){
                         MessageUtil.unicast(uid, protocol);
                     }
+                    noticeJob.orderRecordService.update(jobDataMap.getInt("orId"),1);
                     jobDataMap.replace("type",QuartzJobCode.Order_Complete_Remind);
                     noticeJob.schedulerManager.add(jobKey,jobGroup, (((LocalDateTime) jobDataMap.get("effectTime")).plusHours(1)),jobDataMap);
                     break;
                 case Order_Complete_Remind:
+                    noticeJob.orderRecordService.update(jobDataMap.getInt("orId"),2);
                     protocol = Protocol.Order_Complete_Remind_Notice;
                     protocol.setData(((LocalDateTime) jobDataMap.get("effectTime")).plusHours(1));
                     noticeMessageDTO.setValue(protocol.getValue());

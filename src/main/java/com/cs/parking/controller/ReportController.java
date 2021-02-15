@@ -2,6 +2,7 @@ package com.cs.parking.controller;
 
 import com.cs.parking.base.DTO.ResultDTO;
 import com.cs.parking.base.baseinterface.ParameterVerify;
+import com.cs.parking.base.baseinterface.VerifyToken;
 import com.cs.parking.base.utils.ResultUtils;
 import com.cs.parking.code.ParameterCode;
 import com.cs.parking.dto.ReportDTO;
@@ -38,6 +39,7 @@ public class ReportController {
 
     @GetMapping("/searchAllUnUsed")
     @Transactional
+    @VerifyToken
     @ResponseBody
     @ApiOperation(value = "获取所有违规举报记录",notes = "不建议使用")
     public ResultDTO<Map<String, Map<String, Map<String, Map<String, List<Report>>>>>> searchAllUnUsed(
@@ -56,6 +58,7 @@ public class ReportController {
 
     @GetMapping("/searchAll")
     @Transactional
+    @VerifyToken
     @ResponseBody
     @ApiOperation(value = "获取所有违规举报记录")
     public ResultDTO<PageInfo<ReportDTO>> searchAll(
@@ -82,6 +85,7 @@ public class ReportController {
 
     @GetMapping("/searchLongLat")
     @Transactional
+    @VerifyToken
     @ResponseBody
     @ApiOperation(value = "经纬度获取所有违规举报记录")
     public ResultDTO<PageInfo<ReportDTO>> searchLongLat(
@@ -108,6 +112,7 @@ public class ReportController {
 
     @PostMapping("/appendRepord")
     @Transactional
+    @VerifyToken
     @ResponseBody
     @ApiOperation(value = "上报违规记录")
     public ResultDTO appendReport(
@@ -137,6 +142,7 @@ public class ReportController {
 
     @PutMapping("/dealReport")
     @Transactional
+    @VerifyToken
     @ResponseBody
     @ApiOperation(value = "处理违规")
     @ParameterVerify(parameterKey = "rid",parameterName = "违规记录id",parameterCode = ParameterCode.ReportParameter)
@@ -153,6 +159,7 @@ public class ReportController {
 
     @DeleteMapping("/cancelReport")
     @Transactional
+    @VerifyToken
     @ResponseBody
     @ApiOperation(value = "取消上报")
     public ResultDTO cancelReport(@ApiParam(value = "违规记录id",required = true)@RequestParam(value = "rid",required = true)Integer rid){

@@ -6,13 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.cs.parking.base.utils.JWTUtil;
-import com.cs.parking.controller.NoticeMessageDTO;
+import com.cs.parking.dto.NoticeMessageDTO;
 import com.cs.parking.manager.ConnManager;
-import com.cs.parking.code.Protocol;
 import com.cs.parking.base.config.WSConfig;
 import com.cs.parking.base.utils.MessageUtil;
-import com.cs.parking.pojo.User;
 import com.cs.parking.service.NoticeMessageService;
 import com.google.common.base.Preconditions;
 import io.netty.buffer.Unpooled;
@@ -129,7 +126,6 @@ public class HttpServerHandler extends ChannelInboundHandlerAdapter {
                         // 握手成功，升级到websocket协议
                         ctx.pipeline().replace(ctx.handler(), "websocketHandler", websocketHandler);
                         ConnManager.getInstance().onLogin(uid,ctx.channel());
-                        MessageUtil.unicast(uid, Protocol.HeartbeatReq.getValue(),"心跳包30秒一次");
                     }else{
                         // 握手失败
                         ctx.close();

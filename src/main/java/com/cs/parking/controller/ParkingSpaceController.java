@@ -3,6 +3,7 @@ package com.cs.parking.controller;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cs.parking.base.DTO.ResultDTO;
 import com.cs.parking.base.baseinterface.ParameterVerify;
+import com.cs.parking.base.baseinterface.VerifyToken;
 import com.cs.parking.base.utils.JWTUtil;
 import com.cs.parking.base.utils.RedisUtil;
 import com.cs.parking.base.utils.ResultUtils;
@@ -54,6 +55,7 @@ public class ParkingSpaceController {
     @PostMapping("/append")
     @Transactional
     @ResponseBody
+    @VerifyToken
     @ApiOperation(value = "添加共享车位")
     public ResultDTO append(
             HttpServletRequest request,
@@ -88,6 +90,7 @@ public class ParkingSpaceController {
     @PutMapping("/resetParkingSpace")
     @Transactional
     @ResponseBody
+    @VerifyToken
     @ApiOperation(value = "修改共享车位")
     @ParameterVerify(parameterKey = "pid",parameterName = "车位id",parameterCode = ParameterCode.ParkingSpaceParameter)
     public ResultDTO resetParkingSpace(
@@ -124,6 +127,7 @@ public class ParkingSpaceController {
     @DeleteMapping("/cancelShareParkingSpace")
     @ResponseBody
     @Transactional
+    @VerifyToken
     @ApiOperation(value = "取消共享")
     @ParameterVerify(parameterKey = "pid",parameterName = "车位id",parameterCode = ParameterCode.ParkingSpaceParameter)
     public ResultDTO cancelShareParkingSpace(@ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid){
@@ -140,6 +144,7 @@ public class ParkingSpaceController {
     @PutMapping("/shareParkingSpace")
     @ResponseBody
     @Transactional
+    @VerifyToken
     @ApiOperation(value = "恢复共享")
     @ParameterVerify(parameterKey = "pid",parameterName = "车位id",parameterCode = ParameterCode.ParkingSpaceParameter)
     public ResultDTO shareParkingSpace(@ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid){
@@ -156,6 +161,7 @@ public class ParkingSpaceController {
     @DeleteMapping("/removeParkingSpace")
     @ResponseBody
     @Transactional
+    @VerifyToken
     @ApiOperation(value = "删除车位")
     @ParameterVerify(parameterKey = "pid",parameterName = "车位id",parameterCode = ParameterCode.ParkingSpaceParameter)
     public ResultDTO removeParkingSpace(@ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid){
@@ -172,6 +178,7 @@ public class ParkingSpaceController {
     @GetMapping("/searchOwnerParkingSpace")
     @ResponseBody
     @Transactional
+    @VerifyToken
     @ApiOperation(value = "获取用户所拥有车位信息")
     public ResultDTO<PageInfo<ParkingSpaceOwner>> searchOwnerParkingSpace(
             HttpServletRequest request,
@@ -195,6 +202,7 @@ public class ParkingSpaceController {
 
     @GetMapping("/searchCustomerParkingSpace")
     @ResponseBody
+    @VerifyToken
     @Transactional
     @ApiOperation(value = "经纬度获取附件停车位")
     public ResultDTO<PageInfo<ParkingSpaceCustomer>> searchCustomerParkingSpace(
@@ -221,6 +229,7 @@ public class ParkingSpaceController {
     @GetMapping("/searchAppointmentTime")
     @ResponseBody
     @Transactional
+    @VerifyToken
     @ApiOperation(value = "获取车位今日起全部可预约时间段",notes = "对数据库操作时间长，不建议使用")
     public ResultDTO<Map<LocalDate, Map<Integer, String>>> searchAppointmentTime(@ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid){
         try {
@@ -236,6 +245,7 @@ public class ParkingSpaceController {
     @GetMapping("/searchAppointmentTimeDate")
     @ResponseBody
     @Transactional
+    @VerifyToken
     @ApiOperation(value = "获取车位特定日期可预约时间段",notes = "方法一")
     public ResultDTO<Map<Integer, String>> searchAppointmentTimeDate(
             @ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid,
@@ -254,6 +264,7 @@ public class ParkingSpaceController {
     @GetMapping("/searchAppointmentTimeDateTwo")
     @ResponseBody
     @Transactional
+    @VerifyToken
     @ApiOperation(value = "获取车位特定日期可预约时间段",notes = "方法二")
     public ResultDTO<Map<Integer, String>> searchAppointmentTimeDateTwo(
             @ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid,

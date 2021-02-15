@@ -7,6 +7,7 @@ import com.cs.parking.code.QuartzJobCode;
 import com.cs.parking.exception.ErrorException;
 import com.cs.parking.pojo.ScheduleJob;
 import com.cs.parking.quzrtzJob.NoticeJob;
+import com.cs.parking.quzrtzJob.SystemNoticeJob;
 import com.cs.parking.service.ScheduleJobService;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +46,11 @@ public class SchedulerManager {
     }
 
 
-    public void resumeJob(){
+    /*systemjob*/
+    public void systemJob(){
         try {
             scheduler.start();
-            JobDetail jobDetail = JobBuilder.newJob(NoticeJob.class)
+            JobDetail jobDetail = JobBuilder.newJob(SystemNoticeJob.class)
                     .withIdentity("resumeKey", "resumeGroup")
                     .build();
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 0 0 * * *");

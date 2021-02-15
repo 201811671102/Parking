@@ -2,21 +2,18 @@ package com.cs.parking.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cs.parking.code.BaseCode;
-import com.cs.parking.code.Protocol;
-import com.cs.parking.controller.NoticeMessageDTO;
+import com.cs.parking.dto.NoticeMessageDTO;
 import com.cs.parking.exception.ErrorException;
 import com.cs.parking.exception.SystemException;
 import com.cs.parking.mapper.NoticeMessageMapper;
 import com.cs.parking.pojo.NoticeMessage;
 import com.cs.parking.pojo.NoticeMessageExample;
 import com.cs.parking.service.NoticeMessageService;
-import org.quartz.JobDataMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @ClassName NoticeMessageServiceImpl

@@ -32,8 +32,15 @@ public class GloablExceptionHandler {
     }
 
     @ResponseBody
+    @ExceptionHandler(NullPointerException.class)
+    public ResultDTO<String> nullPointerException(NullPointerException e){
+        return ResultUtils.error(BaseCode.Null.getCode(),BaseCode.Null.getMessage());
+    }
+
+    @ResponseBody
     @ExceptionHandler(Exception.class)
     public ResultDTO<String> exception(Exception e){
+        e.printStackTrace();
         log.info(e.getMessage());
         return ResultUtils.error(BaseCode.System_Error.getCode(),e.getMessage(),null);
     }

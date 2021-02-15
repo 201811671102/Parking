@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cs.parking.base.DTO.ResultDTO;
 import com.cs.parking.base.baseinterface.ParameterVerify;
+import com.cs.parking.base.baseinterface.VerifyToken;
 import com.cs.parking.base.utils.CornTimeUtil;
 import com.cs.parking.base.utils.JWTUtil;
 import com.cs.parking.base.utils.MessageUtil;
@@ -73,6 +74,7 @@ public class OrderRecordController {
 
     @DeleteMapping("/cancelOrderRecord")
     @ResponseBody
+    @VerifyToken
     @Transactional
     @ApiOperation(value = "取消订单")
     public ResultDTO cancelOrderRecord(@ApiParam(value = "订单id",required = true)@RequestParam(value = "orId",required = true)Integer orId){
@@ -88,6 +90,7 @@ public class OrderRecordController {
 
     @PostMapping("/appendOrderRecord")
     @ResponseBody
+    @VerifyToken
     @Transactional
     @ApiOperation(value = "新增订单")
     public ResultDTO appendOrderRecord(
@@ -134,6 +137,7 @@ public class OrderRecordController {
                         jobDataMap.put("type", QuartzJobCode.Order_Coming_Remind_First);
                         jobDataMap.put("uid",uid);
                         jobDataMap.put("effectTime",orderComingRemindFirst);
+                        jobDataMap.put("orId",orderRecord.getId());
                         String jobKey =  String.valueOf(System.currentTimeMillis()) + uid.toString();
                         String jobGroup = QuartzJobCode.Order_Coming_Remind_First.getCode().toString();
                         Date jobTime = Date.from(localDateTime.withHour(integer).withMinute(0).withSecond(0).atZone(ZoneId.of("Asia/Shanghai")).toInstant());
@@ -159,6 +163,7 @@ public class OrderRecordController {
 
     @GetMapping("/searchOrderRecordUser")
     @ResponseBody
+    @VerifyToken
     @Transactional
     @ApiOperation(value = "查询用户订单记录",notes = "订单状态 0未开始，1进行中，2已完成")
     public ResultDTO<PageInfo<OrderRecordCustomerDTO>> searchOrderRecordUser(
@@ -183,6 +188,7 @@ public class OrderRecordController {
     @GetMapping("/searchOrderRecordOwner")
     @ResponseBody
     @Transactional
+    @VerifyToken
     @ApiOperation(value = "查询用户某车位某日订单情况")
     @ParameterVerify(parameterKey = "pid",parameterName = "车位id",parameterCode = ParameterCode.ParkingSpaceParameter)
     public ResultDTO<List<OrderRecordOwnerDTO>> searchOrderRecordOwner(

@@ -1,9 +1,7 @@
 package com.cs.parking.service;
 
-import com.cs.parking.code.Protocol;
-import com.cs.parking.controller.NoticeMessageDTO;
+import com.cs.parking.dto.NoticeMessageDTO;
 import com.cs.parking.pojo.NoticeMessage;
-import org.quartz.JobDataMap;
 
 import java.util.List;
 

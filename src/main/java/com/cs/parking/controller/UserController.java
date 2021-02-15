@@ -60,6 +60,7 @@ public class UserController {
 
     @PostMapping("/refreshToken")
     @ResponseBody
+    @VerifyToken
     @ApiOperation(value = "token刷新",notes = "token失效前通过此接口刷新token")
     public ResultDTO<String> refreshToken(HttpServletRequest request){
         try {
@@ -82,6 +83,9 @@ public class UserController {
         try {
             JSONObject SessionKeyOpenId = new WechatUtil().getSessionKeyOrOpenId(code);
             String openid = SessionKeyOpenId.getString("openid");
+            if (!StringUtils.isNotBlank(openid)){
+                throw new NullPointerException();
+            }
             if (redisUtil.hasKey(openid)){
                 user = (User) redisUtil.get(openid);
             }else {
@@ -120,7 +124,7 @@ public class UserController {
             DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
             User user = userService.selectById(decodedJWT.getClaim("uid").asInt());
             if (user == null){
-                throw new SystemException(UserExceptionCode.NoUser);
+                throw new SystemException(BaseCode.Null);
             }else if (StringUtils.isNotBlank(user.getName())){
                 throw new SystemException(UserExceptionCode.Authentication);
             }else{

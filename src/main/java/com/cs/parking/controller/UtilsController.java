@@ -8,6 +8,11 @@ import com.cs.parking.base.utils.EncodeUtil;
 import com.cs.parking.base.utils.RedisUtil;
 import com.cs.parking.base.utils.ResultUtils;
 import com.cs.parking.exception.ErrorException;
+import com.cs.parking.mapper.UserCouponsMapper;
+import com.cs.parking.mapper.UserMapper;
+import com.cs.parking.pojo.User;
+import com.cs.parking.pojo.UserCoupons;
+import com.cs.parking.pojo.UserCouponsExample;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -22,6 +27,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName UtilsController
@@ -61,7 +67,7 @@ public class UtilsController {
                     return ResultUtils.success("http://"+uri+":"+nginxPort+url);
                 }catch (Exception e){
                     e.printStackTrace();
-                    throw new ErrorException(BaseCode.RedisError,"redis缓存图片错误"+ '\n'+e.getMessage());
+                    throw new ErrorException(BaseCode.System_Error,"redis缓存图片错误"+ '\n'+e.getMessage());
                 }
             }else{
                 throw new ErrorException(BaseCode.FailOperation,"上传内容为空");
@@ -89,12 +95,12 @@ public class UtilsController {
                         try {
                             photo = redisUtil.get(x).toString();
                         }catch (Exception e){
-                            throw new ErrorException(BaseCode.RedisError,"获取键为："+x+" 的redis缓存出错！"+'\n'+e.getMessage());
+                            throw new ErrorException(BaseCode.System_Error,"获取键为："+x+" 的redis缓存出错！"+'\n'+e.getMessage());
                         }
                         try {
                             ftpOperation.uploadToFtp(EncodeUtil.getInstance().decodeImage(photo),x);
                         }catch (Exception e){
-                            throw new ErrorException(BaseCode.FTPError,e.getMessage());
+                            throw new ErrorException(BaseCode.System_Error,e.getMessage());
                         }
 
                     });
@@ -106,7 +112,6 @@ public class UtilsController {
 
     @GetMapping("/getDate")
     @ResponseBody
-    @VerifyToken
     @ApiOperation(value = "获取当前时间测试")
     public ResultDTO getDate(){
         LocalDateTime localDateTime = LocalDateTime.now();

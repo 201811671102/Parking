@@ -1,4 +1,4 @@
-package com.cs.parking.controller;
+package com.cs.parking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

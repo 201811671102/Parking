@@ -39,7 +39,7 @@ public class FtpClientFactory implements PooledObjectFactory<FTPClient> {
                 ftpClient.disconnect();
             }
         } catch (IOException e) {
-            throw new ErrorException(BaseCode.FTPError,"Could not disconnect from server.\n "+e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,"Could not disconnect from server.\n "+e.getMessage());
         }
     }
     //链接状态检查
@@ -72,7 +72,7 @@ public class FtpClientFactory implements PooledObjectFactory<FTPClient> {
                 ftpClient.disconnect();
             }
         } catch (IOException e) {
-            throw new ErrorException(BaseCode.FTPError,"Could not disconnect from server. \n "+e.getMessage());
+            throw new ErrorException(BaseCode.System_Error,"Could not disconnect from server. \n "+e.getMessage());
         }
     }
     //用于连接池中获取pool属性

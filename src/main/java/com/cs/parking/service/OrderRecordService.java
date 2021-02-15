@@ -18,4 +18,8 @@ public interface OrderRecordService {
    * 获取某车位某日的所有订单,计算其可预约时间
    * */
    Map<Integer,String> searchAppointmentTime(Integer pid, Date date,Map<Integer, String> timeOfDayMap);
+   /*
+   * 修改订单状态
+   * */
+   void update(Integer orId,Integer state);
 }

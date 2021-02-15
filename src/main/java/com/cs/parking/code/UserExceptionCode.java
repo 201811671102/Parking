@@ -11,9 +11,7 @@ package com.cs.parking.code;
 public enum  UserExceptionCode {
 
     NoToken(10300,"请求没有token或token已经过期"),
-    TokenOverdue(10400,"token即将过期，请刷新token"),
-    Authentication(10401,"该用户已经实名认证"),
-    NoUser(10404,"没有此用户");
+    Authentication(10401,"该用户已经实名认证");
 
     UserExceptionCode(Integer code,String message){
         this.code = code;

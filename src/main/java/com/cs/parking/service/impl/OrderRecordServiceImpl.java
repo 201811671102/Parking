@@ -90,4 +90,15 @@ public class OrderRecordServiceImpl implements OrderRecordService {
         return timeOfDayMap;
     }
 
+    @Override
+    public void update(Integer orId, Integer state) {
+        OrderRecord orderRecord = new OrderRecord();
+        orderRecord.setId(orId);
+        orderRecord.setOrderState(state);
+        int i = orderRecordMapper.updateByPrimaryKeySelective(orderRecord);
+        if (i == -1){
+            throw new ErrorException(BaseCode.System_Error,"修改订单失败");
+        }
+    }
+
 }
