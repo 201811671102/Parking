@@ -46,14 +46,8 @@ public class ReportController {
             @ApiParam(value = "违规类型",required = false)@RequestParam(value = "reportType",required = false,defaultValue = "-1")String reportType,
             @ApiParam(value = "是否处理完毕",required = false)@RequestParam(value = "deal",required = false)boolean deal
     ){
-        try {
-            Map<String, Map<String, Map<String, Map<String, List<Report>>>>> stringMapMap = reportService.selectAll(deal, Integer.parseInt(reportType));
-            return ResultUtils.success(stringMapMap);
-        }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        Map<String, Map<String, Map<String, Map<String, List<Report>>>>> stringMapMap = reportService.selectAll(deal, Integer.parseInt(reportType));
+        return ResultUtils.success(stringMapMap);
     }
 
     @GetMapping("/searchAll")
@@ -71,16 +65,10 @@ public class ReportController {
             @ApiParam(value = "县",required = true)@RequestParam(value = "county",required = true)String county,
             @ApiParam(value = "镇",required = true)@RequestParam(value = "town",required = true)String town
     ){
-        try {
-            PageHelper.startPage(offset,limit);
-            List<ReportDTO> reportDTOList = reportService.selectAll(province, city, county, town, deal, Integer.parseInt(reportType));
-            PageInfo<ReportDTO> pageInfo = new PageInfo<>(reportDTOList);
-            return ResultUtils.success(pageInfo);
-        }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        PageHelper.startPage(offset,limit);
+        List<ReportDTO> reportDTOList = reportService.selectAll(province, city, county, town, deal, Integer.parseInt(reportType));
+        PageInfo<ReportDTO> pageInfo = new PageInfo<>(reportDTOList);
+        return ResultUtils.success(pageInfo);
     }
 
     @GetMapping("/searchLongLat")
@@ -98,16 +86,10 @@ public class ReportController {
             @ApiParam(value = "最小纬度",required = true)@RequestParam(value = "BLat",required = true)double BLat,
             @ApiParam(value = "最大纬度",required = true)@RequestParam(value = "TLat",required = true)double TLat
     ){
-        try {
-            PageHelper.startPage(offset,limit);
-            List<ReportDTO> reportDTOList = reportService.selectByLongLat(TLat, BLat, LLong, RLong, deal, Integer.parseInt(reportType));
-            PageInfo<ReportDTO> pageInfo = new PageInfo<>(reportDTOList);
-            return ResultUtils.success(pageInfo);
-        }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        PageHelper.startPage(offset,limit);
+        List<ReportDTO> reportDTOList = reportService.selectByLongLat(TLat, BLat, LLong, RLong, deal, Integer.parseInt(reportType));
+        PageInfo<ReportDTO> pageInfo = new PageInfo<>(reportDTOList);
+        return ResultUtils.success(pageInfo);
     }
 
     @PostMapping("/appendRepord")
@@ -127,16 +109,10 @@ public class ReportController {
             @ApiParam(value = "纬度",required = true)@RequestParam(value = "longitude",required = true)double latitude,
             @ApiParam(value = "违规照片",required = true)@RequestParam(value = "reportPhoto",required = true)String[] reportPhotoArr
     ){
-        try {
-            String reportPhoto = Arrays.stream(reportPhotoArr).collect(Collectors.joining(";"));
-            Report report = new Report(carNumber,reportType,province,city,county,town,address,new Date(),longitude,latitude,reportPhoto,false,false);
-            reportService.insert(report);
-            return ResultUtils.success();
-       }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-       }catch (ErrorException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage() + '\n' + e.getErrorMessage(), null);
-       }
+        String reportPhoto = Arrays.stream(reportPhotoArr).collect(Collectors.joining(";"));
+        Report report = new Report(carNumber,reportType,province,city,county,town,address,new Date(),longitude,latitude,reportPhoto,false,false);
+        reportService.insert(report);
+        return ResultUtils.success();
     }
 
 
@@ -147,14 +123,8 @@ public class ReportController {
     @ApiOperation(value = "处理违规")
     @ParameterVerify(parameterKey = "rid",parameterName = "违规记录id",parameterCode = ParameterCode.ReportParameter)
     public ResultDTO dealReport(@ApiParam(value = "违规记录id",required = true)@RequestParam(value = "rid",required = true)Integer rid){
-        try {
-            reportService.updateDeal(rid);
-            return ResultUtils.success();
-        }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage() + '\n' + e.getErrorMessage(), null);
-        }
+        reportService.updateDeal(rid);
+        return ResultUtils.success();
     }
 
     @DeleteMapping("/cancelReport")
@@ -163,13 +133,7 @@ public class ReportController {
     @ResponseBody
     @ApiOperation(value = "取消上报")
     public ResultDTO cancelReport(@ApiParam(value = "违规记录id",required = true)@RequestParam(value = "rid",required = true)Integer rid){
-        try {
-            reportService.deleteCancel(rid);
-            return ResultUtils.success();
-        }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage() + '\n' + e.getErrorMessage(), null);
-        }
+        reportService.deleteCancel(rid);
+        return ResultUtils.success();
     }
 }

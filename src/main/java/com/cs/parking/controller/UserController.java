@@ -63,13 +63,7 @@ public class UserController {
     @VerifyToken
     @ApiOperation(value = "token刷新",notes = "token失效前通过此接口刷新token")
     public ResultDTO<String> refreshToken(HttpServletRequest request){
-        try {
-            return ResultUtils.success(JWTUtil.getInstance().refreshJWT(request));
-        }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        return ResultUtils.success(JWTUtil.getInstance().refreshJWT(request));
     }
 
 
@@ -80,33 +74,25 @@ public class UserController {
     @ApiOperation(value = "用户登录",notes = "微信登录接口，返回用户信息及签名认证jwt，存放在消息头，键名为token,时效1小时")
     public ResultDTO<LoginDTO> login(@ApiParam(value = "微信小程序的code",required = true)@RequestParam(value = "code",required = true)String code){
         User user =  null;
-        try {
-            JSONObject SessionKeyOpenId = new WechatUtil().getSessionKeyOrOpenId(code);
-            String openid = SessionKeyOpenId.getString("openid");
-            if (!StringUtils.isNotBlank(openid)){
-                throw new NullPointerException();
-            }
-            if (redisUtil.hasKey(openid)){
-                user = (User) redisUtil.get(openid);
-            }else {
-                user = userService.selectByOpenid(openid);
-                if (user == null){
-                    user = new User();
-                    user.setOpenId(openid);
-                    userService.insertUser(user);
-                }
-                redisUtil.set(openid,user);
-            }
-            String jwt = JWTUtil.getInstance().createJWT(user.getId());
-            LoginDTO loginDTO = new LoginDTO(user,jwt);
-            return ResultUtils.success(loginDTO);
-        }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }finally {
-
+        JSONObject SessionKeyOpenId = new WechatUtil().getSessionKeyOrOpenId(code);
+        String openid = SessionKeyOpenId.getString("openid");
+        if (!StringUtils.isNotBlank(openid)){
+            throw new NullPointerException();
         }
+        if (redisUtil.hasKey(openid)){
+            user = (User) redisUtil.get(openid);
+        }else {
+            user = userService.selectByOpenid(openid);
+            if (user == null){
+                user = new User();
+                user.setOpenId(openid);
+                userService.insertUser(user);
+            }
+            redisUtil.set(openid,user);
+        }
+        String jwt = JWTUtil.getInstance().createJWT(user.getId());
+        LoginDTO loginDTO = new LoginDTO(user,jwt);
+        return ResultUtils.success(loginDTO);
     }
 
     @PutMapping("/authentication")
@@ -120,24 +106,18 @@ public class UserController {
             @ApiParam(value = "证件类型,1身份证，2护照，3澳门香港，4台湾",required = true)@RequestParam(value = "idType",required = true)Integer idType,
             @ApiParam(value = "证件号",required = true)@RequestParam(value = "idNumber",required = true)String idNumber
     ){
-        try {
-            DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
-            User user = userService.selectById(decodedJWT.getClaim("uid").asInt());
-            if (user == null){
-                throw new SystemException(BaseCode.Null);
-            }else if (StringUtils.isNotBlank(user.getName())){
-                throw new SystemException(UserExceptionCode.Authentication);
-            }else{
-                user.setName(name);
-                user.setIdType(idType);
-                user.setIdNumber(idNumber);
-                userService.updateUser(user);
-                return ResultUtils.success();
-            }
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
+        DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
+        User user = userService.selectById(decodedJWT.getClaim("uid").asInt());
+        if (user == null){
+            throw new SystemException(BaseCode.Null);
+        }else if (StringUtils.isNotBlank(user.getName())){
+            throw new SystemException(UserExceptionCode.Authentication);
+        }else{
+            user.setName(name);
+            user.setIdType(idType);
+            user.setIdNumber(idNumber);
+            userService.updateUser(user);
+            return ResultUtils.success();
         }
     }
 
@@ -169,10 +149,6 @@ public class UserController {
             jobDataMap.put("vipTime",localDateTime);
             schedulerManager.add(jobKey,jobGroup,localDateTime.minusDays(10),jobDataMap);
             return ResultUtils.success(localDateTime.format(DateTimeFormatter.ofPattern("yyy-MM-dd HH:mm:ss")));
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
         } catch (SchedulerException e) {
             return ResultUtils.error(BaseCode.System_Error.getCode(),e.getMessage());
         }

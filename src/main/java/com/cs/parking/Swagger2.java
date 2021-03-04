@@ -35,8 +35,8 @@ public class Swagger2 {
         parameters.add(parameterBuilder.build());
 
         Docket docket = new Docket(DocumentationType.SWAGGER_2);
-   //     docket.host("localhost:9090");
-        docket.host("39.96.68.53:9090");
+     //   docket.host("localhost:9090");
+        docket.host("120.26.176.101:9090");
         docket.apiInfo(apiInfo())
                 .useDefaultResponseMessages(false)
                 .select()

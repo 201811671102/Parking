@@ -74,17 +74,11 @@ public class ParkingSpaceController {
             @ApiParam(value = "经度",required = true)@RequestParam(value = "longitude",required = true)double longitude,
             @ApiParam(value = "纬度",required = true)@RequestParam(value = "latitude",required = true)double latitude
             ){
-            try {
-                DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
-                Integer uid = decodedJWT.getClaim("uid").asInt();
-                ParkingSpace parkingSpace = new ParkingSpace(uid,shortName,province,city,county,town,address,rentPhoneNumber,price,startTimeYear,endTimeYear,startTimeDay,endTimeDay,longitude,latitude,true,false);
-                parkingSpaceService.insert(parkingSpace);
-                return ResultUtils.success();
-            }catch (SystemException e){
-                return ResultUtils.error(e.getCode(), e.getMessage(),null);
-            }catch (ErrorException e){
-                return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-            }
+            DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
+            Integer uid = decodedJWT.getClaim("uid").asInt();
+            ParkingSpace parkingSpace = new ParkingSpace(uid,shortName,province,city,county,town,address,rentPhoneNumber,price,startTimeYear,endTimeYear,startTimeDay,endTimeDay,longitude,latitude,true,false);
+            parkingSpaceService.insert(parkingSpace);
+            return ResultUtils.success();
     }
 
     @PutMapping("/resetParkingSpace")
@@ -111,17 +105,11 @@ public class ParkingSpaceController {
             @ApiParam(value = "经度",required = false)@RequestParam(value = "longitude",required = false)Double longitude,
             @ApiParam(value = "纬度",required = false)@RequestParam(value = "latitude",required = false)Double latitude
     ){
-        try {
-            DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
-            Integer uid = decodedJWT.getClaim("uid").asInt();
-            ParkingSpace parkingSpace = new ParkingSpace(pid,uid,shortName,province,city,county,town,address,rentPhoneNumber,price,startTimeYear,endTimeYear,startTimeDay,endTimeDay,longitude,latitude);
-            parkingSpaceService.update(parkingSpace);
-            return ResultUtils.success();
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
+        Integer uid = decodedJWT.getClaim("uid").asInt();
+        ParkingSpace parkingSpace = new ParkingSpace(pid,uid,shortName,province,city,county,town,address,rentPhoneNumber,price,startTimeYear,endTimeYear,startTimeDay,endTimeDay,longitude,latitude);
+        parkingSpaceService.update(parkingSpace);
+        return ResultUtils.success();
     }
 
     @DeleteMapping("/cancelShareParkingSpace")
@@ -131,14 +119,8 @@ public class ParkingSpaceController {
     @ApiOperation(value = "取消共享")
     @ParameterVerify(parameterKey = "pid",parameterName = "车位id",parameterCode = ParameterCode.ParkingSpaceParameter)
     public ResultDTO cancelShareParkingSpace(@ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid){
-        try {
-            parkingSpaceService.unShare(pid);
-            return ResultUtils.success();
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        parkingSpaceService.unShare(pid);
+        return ResultUtils.success();
     }
 
     @PutMapping("/shareParkingSpace")
@@ -148,14 +130,8 @@ public class ParkingSpaceController {
     @ApiOperation(value = "恢复共享")
     @ParameterVerify(parameterKey = "pid",parameterName = "车位id",parameterCode = ParameterCode.ParkingSpaceParameter)
     public ResultDTO shareParkingSpace(@ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid){
-        try {
-            parkingSpaceService.share(pid);
-            return ResultUtils.success();
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        parkingSpaceService.share(pid);
+        return ResultUtils.success();
     }
 
     @DeleteMapping("/removeParkingSpace")
@@ -165,14 +141,8 @@ public class ParkingSpaceController {
     @ApiOperation(value = "删除车位")
     @ParameterVerify(parameterKey = "pid",parameterName = "车位id",parameterCode = ParameterCode.ParkingSpaceParameter)
     public ResultDTO removeParkingSpace(@ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid){
-        try {
-            parkingSpaceService.delete(pid);
-            return ResultUtils.success();
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        parkingSpaceService.delete(pid);
+        return ResultUtils.success();
     }
 
     @GetMapping("/searchOwnerParkingSpace")
@@ -186,18 +156,12 @@ public class ParkingSpaceController {
             @ApiParam(value = "每页数据数",required = true)@RequestParam(value = "limit",required = true)Integer limit,
             @ApiParam(value = "是否分享",required = true)@RequestParam(value = "share",required = true)boolean share
     ){
-        try {
-            DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
-            Integer uid = decodedJWT.getClaim("uid").asInt();
-            PageHelper.startPage(offset,limit);
-            List<ParkingSpaceOwner> parkingSpaceOwnerList = parkingSpaceService.selectParkingSpaceUser(uid, share);
-            PageInfo<ParkingSpaceOwner> parkingSpaceOwnerPageInfo = new PageInfo<>(parkingSpaceOwnerList);
-            return ResultUtils.success(parkingSpaceOwnerPageInfo);
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
+        Integer uid = decodedJWT.getClaim("uid").asInt();
+        PageHelper.startPage(offset,limit);
+        List<ParkingSpaceOwner> parkingSpaceOwnerList = parkingSpaceService.selectParkingSpaceUser(uid, share);
+        PageInfo<ParkingSpaceOwner> parkingSpaceOwnerPageInfo = new PageInfo<>(parkingSpaceOwnerList);
+        return ResultUtils.success(parkingSpaceOwnerPageInfo);
     }
 
     @GetMapping("/searchCustomerParkingSpace")
@@ -214,16 +178,10 @@ public class ParkingSpaceController {
             @ApiParam(value = "起始页>=0",required = true)@RequestParam(value = "offset",required = true)Integer offset,
             @ApiParam(value = "每页数据数",required = true)@RequestParam(value = "limit",required = true)Integer limit
     ){
-        try {
-            PageHelper.startPage(offset,limit);
-            List<ParkingSpaceCustomer> parkingSpaceCustomerList = parkingSpaceService.selectParkingSpaceCustomer(TLat, BLat, LLong, RLong);
-            PageInfo<ParkingSpaceCustomer> parkingSpaceOwnerPageInfo = new PageInfo<>(parkingSpaceCustomerList);
-            return ResultUtils.success(parkingSpaceOwnerPageInfo);
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        PageHelper.startPage(offset,limit);
+        List<ParkingSpaceCustomer> parkingSpaceCustomerList = parkingSpaceService.selectParkingSpaceCustomer(TLat, BLat, LLong, RLong);
+        PageInfo<ParkingSpaceCustomer> parkingSpaceOwnerPageInfo = new PageInfo<>(parkingSpaceCustomerList);
+        return ResultUtils.success(parkingSpaceOwnerPageInfo);
     }
 
     @GetMapping("/searchAppointmentTime")
@@ -232,14 +190,8 @@ public class ParkingSpaceController {
     @VerifyToken
     @ApiOperation(value = "获取车位今日起全部可预约时间段",notes = "对数据库操作时间长，不建议使用")
     public ResultDTO<Map<LocalDate, Map<Integer, String>>> searchAppointmentTime(@ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid){
-        try {
-            Map<LocalDate, Map<Integer, String>> localDateMapMap = appointmentTimeService.searchAppointmentTime(pid);
-            return ResultUtils.success(localDateMapMap);
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        Map<LocalDate, Map<Integer, String>> localDateMapMap = appointmentTimeService.searchAppointmentTime(pid);
+        return ResultUtils.success(localDateMapMap);
     }
 
     @GetMapping("/searchAppointmentTimeDate")
@@ -251,14 +203,8 @@ public class ParkingSpaceController {
             @ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid,
             @ApiParam(value = "预约日期",required = true)@RequestParam(value = "date",required = true)Date date
     ){
-        try {
-            Map<Integer, String> localDateMapMap = appointmentTimeService.searchAppointmentTime(pid,date);
-            return ResultUtils.success(localDateMapMap);
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        Map<Integer, String> localDateMapMap = appointmentTimeService.searchAppointmentTime(pid,date);
+        return ResultUtils.success(localDateMapMap);
     }
 
     @GetMapping("/searchAppointmentTimeDateTwo")
@@ -270,23 +216,17 @@ public class ParkingSpaceController {
             @ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid,
             @ApiParam(value = "预约日期",required = true)@RequestParam(value = "date",required = true)Date date
     ){
-        try {
-            ParkingSpace parkingSpace = parkingSpaceService.selectId(pid);
-            if (parkingSpace == null){
-                throw new ErrorException(BaseCode.Null,"没有pid为："+pid+" 的车位信息");
-            }
-            if (date.after(parkingSpace.getEndTimeYear())){
-                throw new ErrorException(BaseCode.FailOperation,"预约时间不能在车位共享截至日期后");
-            }
-            if (date.before(parkingSpace.getStartTimeYear())){
-                throw new ErrorException(BaseCode.FailOperation,"预约时间不能在车位共享开始日期前");
-            }
-            Map<Integer, String> localDateMapMap = orderRecordService.searchAppointmentTime(pid,date,TimeOfDay.getAppointment(parkingSpace.getStartTimeDay(),parkingSpace.getEndTimeDay()));
-            return ResultUtils.success(localDateMapMap);
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
+        ParkingSpace parkingSpace = parkingSpaceService.selectId(pid);
+        if (parkingSpace == null){
+            throw new ErrorException(BaseCode.Null,"没有pid为："+pid+" 的车位信息");
         }
+        if (date.after(parkingSpace.getEndTimeYear())){
+            throw new ErrorException(BaseCode.FailOperation,"预约时间不能在车位共享截至日期后");
+        }
+        if (date.before(parkingSpace.getStartTimeYear())){
+            throw new ErrorException(BaseCode.FailOperation,"预约时间不能在车位共享开始日期前");
+        }
+        Map<Integer, String> localDateMapMap = orderRecordService.searchAppointmentTime(pid,date,TimeOfDay.getAppointment(parkingSpace.getStartTimeDay(),parkingSpace.getEndTimeDay()));
+        return ResultUtils.success(localDateMapMap);
     }
 }

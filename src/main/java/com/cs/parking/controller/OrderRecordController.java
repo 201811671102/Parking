@@ -78,14 +78,8 @@ public class OrderRecordController {
     @Transactional
     @ApiOperation(value = "取消订单")
     public ResultDTO cancelOrderRecord(@ApiParam(value = "订单id",required = true)@RequestParam(value = "orId",required = true)Integer orId){
-        try {
-            orderRecordService.delete(orId);
-            return ResultUtils.success();
-        }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        orderRecordService.delete(orId);
+        return ResultUtils.success();
     }
 
     @PostMapping("/appendOrderRecord")
@@ -103,7 +97,7 @@ public class OrderRecordController {
             @ApiParam(value = "预约日期",required = true)@RequestParam(value = "appointmentDate",required = true)Date appointmentDate,
             @ApiParam(value = "预约时间段，0~23",required = true)@RequestParam(value = "appointmentTimeArr",required = true)Integer[] appointmentTimeArr
     ){
-        try {
+       try {
             List<Integer> appointmentTimeList = Arrays.stream(appointmentTimeArr)
                     .sorted(Integer::compareTo)
                     .collect(Collectors.toList());
@@ -152,10 +146,6 @@ public class OrderRecordController {
             parking_space_rent_notice.setData(parkingSpaceRent);
             MessageUtil.unicast(parkingSpaceRent.getUid(),parking_space_rent_notice);
             return ResultUtils.success();
-        }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
         } catch (IOException e) {
             return ResultUtils.error(BaseCode.System_Error.getCode(),e.getMessage(),null);
         }
@@ -171,18 +161,12 @@ public class OrderRecordController {
             @ApiParam(value = "起始页>=0",required = true)@RequestParam(value = "offset",required = true)Integer offset,
             @ApiParam(value = "每页数据数",required = true)@RequestParam(value = "limit",required = true)Integer limit
     ){
-        try {
-            PageHelper.startPage(offset,limit);
-            DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
-            Integer uid = decodedJWT.getClaim("uid").asInt();
-            List<OrderRecordCustomerDTO> orderRecordCustomerDTOList = diyOrderRecordService.selectOrderRecordUser(uid);
-            PageInfo<OrderRecordCustomerDTO> orderRecordCustomerDTOPageInfo = new PageInfo<>(orderRecordCustomerDTOList);
-            return ResultUtils.success(orderRecordCustomerDTOPageInfo);
-        }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        PageHelper.startPage(offset,limit);
+        DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
+        Integer uid = decodedJWT.getClaim("uid").asInt();
+        List<OrderRecordCustomerDTO> orderRecordCustomerDTOList = diyOrderRecordService.selectOrderRecordUser(uid);
+        PageInfo<OrderRecordCustomerDTO> orderRecordCustomerDTOPageInfo = new PageInfo<>(orderRecordCustomerDTOList);
+        return ResultUtils.success(orderRecordCustomerDTOPageInfo);
     }
 
     @GetMapping("/searchOrderRecordOwner")
@@ -195,13 +179,7 @@ public class OrderRecordController {
             @ApiParam(value = "车位id",required = true)@RequestParam(value = "pid",required = true)Integer pid,
             @ApiParam(value = "日期",required = true)@RequestParam(value = "date",required = true)Date date
     ){
-        try {
-            List<OrderRecordOwnerDTO> orderRecordOwnerDTOS = diyOrderRecordService.searchOrderRecordOwner(pid, date);
-            return ResultUtils.success(orderRecordOwnerDTOS);
-        }catch (SystemException e) {
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        List<OrderRecordOwnerDTO> orderRecordOwnerDTOS = diyOrderRecordService.searchOrderRecordOwner(pid, date);
+        return ResultUtils.success(orderRecordOwnerDTOS);
     }
 }

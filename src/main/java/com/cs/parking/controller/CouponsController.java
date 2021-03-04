@@ -50,15 +50,9 @@ public class CouponsController {
             @ApiParam(value = "优惠卷失效时间",required = true)@RequestParam(value = "endTime",required = true)Date endTime,
             @ApiParam(value = "车位id",required = true)@RequestParam(value = "parkingSpaceId",required = true)Integer parkingSpaceId
     ){
-        try {
-            Coupons coupons = new Coupons(name,price,number,startTime,endTime,parkingSpaceId,false);
-            couponsService.insert(coupons);
-            return ResultUtils.success();
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        Coupons coupons = new Coupons(name,price,number,startTime,endTime,parkingSpaceId,false);
+        couponsService.insert(coupons);
+        return ResultUtils.success();
     }
 
     @PutMapping("/changeCoupons")
@@ -75,27 +69,21 @@ public class CouponsController {
             @ApiParam(value = "优惠卷失效时间",required = false)@RequestParam(value = "endTime",required = false)Date endTime,
             @ApiParam(value = "车位id",required = false)@RequestParam(value = "parkingSpaceId",required = false)Integer parkingSpaceId
     ){
-        try {
-            Coupons coupons = couponsService.selectById(cid);
-            if (coupons == null){
-                throw new ErrorException(BaseCode.Null,"没有此优惠卷");
-            }
-            if (coupons.getStartTime().before(new Date())){
-                throw new ErrorException(BaseCode.FailOperation,"优惠卷已经起效");
-            }
-            coupons.setName(name);
-            coupons.setPrice(price);
-            coupons.setNumber(number);
-            coupons.setStartTime(startTime);
-            coupons.setEndTime(endTime);
-            coupons.setParkingSpaceId(parkingSpaceId);
-            couponsService.update(coupons);
-            return ResultUtils.success(new CouponsDTO(coupons));
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
+        Coupons coupons = couponsService.selectById(cid);
+        if (coupons == null){
+            throw new ErrorException(BaseCode.Null,"没有此优惠卷");
         }
+        if (coupons.getStartTime().before(new Date())){
+            throw new ErrorException(BaseCode.FailOperation,"优惠卷已经起效");
+        }
+        coupons.setName(name);
+        coupons.setPrice(price);
+        coupons.setNumber(number);
+        coupons.setStartTime(startTime);
+        coupons.setEndTime(endTime);
+        coupons.setParkingSpaceId(parkingSpaceId);
+        couponsService.update(coupons);
+        return ResultUtils.success(new CouponsDTO(coupons));
     }
 
     @DeleteMapping("/revokeCoupons")
@@ -105,14 +93,8 @@ public class CouponsController {
     @ApiOperation(value = "撤销优惠卷",notes = "已生效优惠卷无法撤销，请联系管理员")
     @ParameterVerify(parameterKey = {"cid"},parameterName = {"优惠卷id"},parameterCode = ParameterCode.CouponsParameter)
     public ResultDTO revokeCoupons(@ApiParam(value = "优惠卷id",required = true)@RequestParam(value = "cid",required = true)Integer cid){
-        try {
-            couponsService.delete(cid);
-            return ResultUtils.success();
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        couponsService.delete(cid);
+        return ResultUtils.success();
     }
 
     @DeleteMapping("/adminRevokeCoupons")
@@ -122,14 +104,8 @@ public class CouponsController {
     @ApiOperation(value = "管理员撤销优惠卷")
     @ParameterVerify(parameterKey = {"cid"},parameterName = {"优惠卷id"},parameterCode = ParameterCode.CouponsParameter)
     public ResultDTO adminRevokeCoupons(@ApiParam(value = "优惠卷id",required = true)@RequestParam(value = "cid",required = true)Integer cid){
-        try {
-            couponsService.adminDelete(cid);
-            return ResultUtils.success();
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        couponsService.adminDelete(cid);
+        return ResultUtils.success();
     }
 
     @GetMapping("/searchCoupons")
@@ -143,16 +119,10 @@ public class CouponsController {
             @ApiParam(value = "是否查询过期优惠卷",required = true)@RequestParam(value = "overdue",required = true)boolean overdue,
             @ApiParam(value = "起始页>=0",required = true)@RequestParam(value = "offset",required = true)Integer offset,
             @ApiParam(value = "每页数据数",required = true)@RequestParam(value = "limit",required = true)Integer limit){
-        try {
-            PageHelper.startPage(offset,limit);
-            List<CouponsDTO> coupons = couponsService.selectByParkingSpaceId(pid,overdue);
-            PageInfo<CouponsDTO> pageInfo = new PageInfo<>(coupons);
-            return ResultUtils.success(pageInfo);
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        PageHelper.startPage(offset,limit);
+        List<CouponsDTO> coupons = couponsService.selectByParkingSpaceId(pid,overdue);
+        PageInfo<CouponsDTO> pageInfo = new PageInfo<>(coupons);
+        return ResultUtils.success(pageInfo);
     }
 
     @GetMapping("/searchCoupon")
@@ -161,16 +131,10 @@ public class CouponsController {
     @ResponseBody
     @ApiOperation(value = "查询特定优惠卷")
     public ResultDTO<CouponsDTO> SearchCoupon(@ApiParam(value = "优惠卷id",required = true)@RequestParam(value = "cid",required = true)Integer cid){
-        try {
-            Coupons coupons = couponsService.selectById(cid);
-            if (coupons == null){
-                return ResultUtils.success();
-            }
-            return ResultUtils.success(new CouponsDTO(coupons));
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
+        Coupons coupons = couponsService.selectById(cid);
+        if (coupons == null){
+            return ResultUtils.success();
         }
+        return ResultUtils.success(new CouponsDTO(coupons));
     }
 }

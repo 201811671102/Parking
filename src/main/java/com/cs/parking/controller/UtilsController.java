@@ -43,14 +43,14 @@ public class UtilsController {
     @Value("${parking.uri}")
     String uri;
     @Value("${parking.nginx.port}")
-    String nginxPort;
+    String nginxport;
 
-    @Autowired
-    RedisUtil redisUtil;
+    /*@Autowired
+    RedisUtil redisUtil;*/
     @Autowired
     FtpOperation ftpOperation;
 
-    @PostMapping("/cachePhoto")
+    /*@PostMapping("/cachePhoto")
     @ResponseBody
     @VerifyToken
     @ApiOperation(value = "缓存图片",notes = "图片缓存接口，返回图片url")
@@ -75,9 +75,9 @@ public class UtilsController {
         }catch (ErrorException e){
             return ResultUtils.error(e.getCode(),e.getMessage(),e.getErrorMessage());
         }
-    }
+    }*/
 
-    @PostMapping("/uploadPhoto")
+   /* @PostMapping("/uploadPhoto")
     @ResponseBody
     @VerifyToken
     @ApiOperation(value = "上传图片",notes = "上传图片接口")
@@ -108,8 +108,26 @@ public class UtilsController {
         }catch (ErrorException e){
             return ResultUtils.error(e.getCode(),e.getMessage(),e.getErrorMessage());
         }
+    }*/
+    @PostMapping("/uploadPhoto")
+    @ResponseBody
+   /* @VerifyToken*/
+    @ApiOperation(value = "上传图片",notes = "上传图片接口")
+    public ResultDTO uploadPhoto(@ApiParam(value = "图片",required = true)@RequestParam(value = "photo",required = true)MultipartFile photo){
+        if (photo.isEmpty()){
+            throw new ErrorException(BaseCode.FailOperation,"图片为空");
+        }
+        try {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd/yyyyMMddHHmmss");
+            String originalFilename = photo.getOriginalFilename();
+            String type = originalFilename.substring(originalFilename.indexOf(".")+1);
+            String url = "/photo/parking/"+dateTimeFormatter.format(LocalDateTime.now())+"."+type;
+            ftpOperation.uploadToFtp(photo.getInputStream(),url);
+            return ResultUtils.success("http://"+uri+":"+nginxport+url);
+        }catch (Exception e){
+            throw new ErrorException(BaseCode.System_Error,e.getMessage());
+        }
     }
-
     @GetMapping("/getDate")
     @ResponseBody
     @ApiOperation(value = "获取当前时间测试")

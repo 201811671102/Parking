@@ -81,10 +81,6 @@ public class UserCouponsController {
             String jobGroup = QuartzJobCode.Coupons_Over.getCode().toString();
             schedulerManager.add(jobKey,jobGroup,endlocalDateTime.minusDays(until/2),jobDataMap);
             return ResultUtils.success();
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
         } catch (SchedulerException e) {
             return ResultUtils.error(BaseCode.System_Error.getCode(),e.getMessage());
         }
@@ -103,16 +99,10 @@ public class UserCouponsController {
             @ApiParam(value = "起始页>=0",required = true)@RequestParam(value = "offset",required = true)Integer offset,
             @ApiParam(value = "每页数据数",required = true)@RequestParam(value = "limit",required = true)Integer limit
         ){
-        try {
-            PageHelper.startPage(offset,limit);
-            DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
-            List<UserCouponsDTO> userCouponsDTOList = userCouponsService.selectAll(decodedJWT.getClaim("uid").asInt(), overdue, used);
-            PageInfo<UserCouponsDTO> pageInfo = new PageInfo<>(userCouponsDTOList);
-            return ResultUtils.success(pageInfo);
-        }catch (SystemException e){
-            return ResultUtils.error(e.getCode(), e.getMessage(),null);
-        }catch (ErrorException e){
-            return ResultUtils.error(e.getCode(),e.getMessage()+'\n'+e.getErrorMessage(),null);
-        }
+        PageHelper.startPage(offset,limit);
+        DecodedJWT decodedJWT = JWTUtil.getInstance().decodedJWT(request);
+        List<UserCouponsDTO> userCouponsDTOList = userCouponsService.selectAll(decodedJWT.getClaim("uid").asInt(), overdue, used);
+        PageInfo<UserCouponsDTO> pageInfo = new PageInfo<>(userCouponsDTOList);
+        return ResultUtils.success(pageInfo);
     }
 }

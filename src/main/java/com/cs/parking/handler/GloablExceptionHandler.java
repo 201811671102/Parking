@@ -5,6 +5,7 @@ import com.cs.parking.base.utils.ResultUtils;
 import com.cs.parking.code.BaseCode;
 import com.cs.parking.exception.ErrorException;
 import com.cs.parking.exception.ParkingBaseException;
+import com.cs.parking.exception.SystemException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,6 +27,11 @@ public class GloablExceptionHandler {
     }
 
     @ResponseBody
+    @ExceptionHandler(SystemException.class)
+    public ResultDTO<String> systemExceptionException(SystemException e){
+        return ResultUtils.error(e.getCode(),e.getMessage());
+    }
+    @ResponseBody
     @ExceptionHandler(ErrorException.class)
     public ResultDTO<String> errorException(ErrorException e){
         return ResultUtils.error(e.getCode(),e.getMessage(),e.getErrorMessage());
@@ -40,7 +46,6 @@ public class GloablExceptionHandler {
     @ResponseBody
     @ExceptionHandler(Exception.class)
     public ResultDTO<String> exception(Exception e){
-        e.printStackTrace();
         log.info(e.getMessage());
         return ResultUtils.error(BaseCode.System_Error.getCode(),e.getMessage(),null);
     }
